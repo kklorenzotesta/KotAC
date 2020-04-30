@@ -42,8 +42,8 @@ ktlint {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.protelis", "protelis", "13.3.3")
-    testImplementation("junit", "junit", "4.12")
+    implementation("org.protelis", "protelis", "13.3.8")
+    testImplementation("junit", "junit", "4.13")
 }
 
 tasks.test {
