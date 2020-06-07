@@ -7,6 +7,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("com.github.ben-manes.versions") version "0.28.0"
     id("jacoco")
+    java // jacoco doesn't works on multiplatform without this
 }
 
 group = "it.unito.kotac"
@@ -64,5 +65,31 @@ kotlin {
                 implementation(kotlin("stdlib-js"))
             }
         }
+    }
+}
+
+// see https://medium.com/@nwillc/kotlin-multiplatform-first-contact-bintray-jacoco-part-3-dbd496bf168a
+tasks.withType<JacocoReport> {
+    dependsOn("jvmTest")
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports."
+    val coverageSourceDirs = arrayOf(
+        "commonMain/src",
+        "jvmMain/src"
+    )
+    val classFiles = File("${buildDir}/classes/kotlin/jvm/")
+        .walkBottomUp()
+        .toSet()
+    classDirectories.setFrom(classFiles)
+    sourceDirectories.setFrom(files(coverageSourceDirs))
+    additionalSourceDirs.setFrom(files(coverageSourceDirs))
+    executionData
+        .setFrom(files("${buildDir}/jacoco/jvmTest.exec"))
+    reports {
+        xml.isEnabled = true
+        csv.isEnabled = false
+        html.isEnabled = true
+        html.destination = 
+                File("${buildDir}/jacoco-reports/html")
     }
 }
