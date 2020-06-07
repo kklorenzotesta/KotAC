@@ -1,10 +1,9 @@
 import com.github.benmanes.gradle.versions.reporter.PlainTextReporter
 import com.github.benmanes.gradle.versions.reporter.result.Result
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("multiplatform") version "1.3.72"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("com.github.ben-manes.versions") version "0.28.0"
     id("jacoco")
@@ -37,19 +36,33 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 ktlint {
-    version.set("0.37.0")
     disabledRules.set(setOf("no-wildcard-imports"))
 }
 
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-    testImplementation("junit", "junit", "4.13")
-}
-
-tasks.test {
-    useJUnit()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+kotlin {
+    jvm {
+        val main by compilations.getting {
+            kotlinOptions {
+                jvmTarget = "1.8"
+            }
+        }
+    }
+    js()
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+            }
+        }
+        jvm().compilations["main"].defaultSourceSet {
+            dependencies {
+                implementation(kotlin("stdlib-jdk8"))
+            }
+        }
+        js().compilations["main"].defaultSourceSet {
+            dependencies {
+                implementation(kotlin("stdlib-js"))
+            }
+        }
+    }
 }
