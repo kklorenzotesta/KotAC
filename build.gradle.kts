@@ -37,12 +37,12 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 ktlint {
+    version.set("0.37.0")
     disabledRules.set(setOf("no-wildcard-imports"))
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.protelis", "protelis", "13.3.8")
     testImplementation("junit", "junit", "4.13")
 }
 
