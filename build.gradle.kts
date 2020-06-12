@@ -74,22 +74,22 @@ tasks.withType<JacocoReport> {
     group = "Reporting"
     description = "Generate Jacoco coverage reports."
     val coverageSourceDirs = arrayOf(
-        "commonMain/src",
-        "jvmMain/src"
+            "commonMain/src",
+            "jvmMain/src"
     )
-    val classFiles = File("${buildDir}/classes/kotlin/jvm/")
-        .walkBottomUp()
-        .toSet()
+    val classFiles = File("$buildDir/classes/kotlin/jvm/")
+            .walkBottomUp()
+            .toSet()
     classDirectories.setFrom(classFiles)
     sourceDirectories.setFrom(files(coverageSourceDirs))
     additionalSourceDirs.setFrom(files(coverageSourceDirs))
     executionData
-        .setFrom(files("${buildDir}/jacoco/jvmTest.exec"))
+            .setFrom(files("$buildDir/jacoco/jvmTest.exec"))
     reports {
         xml.isEnabled = true
         csv.isEnabled = false
         html.isEnabled = true
-        html.destination = 
-                File("${buildDir}/jacoco-reports/html")
+        html.destination =
+                File("$buildDir/jacoco-reports/html")
     }
 }
