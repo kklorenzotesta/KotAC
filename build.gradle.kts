@@ -3,9 +3,9 @@ import com.github.benmanes.gradle.versions.reporter.result.Result
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    kotlin("multiplatform") version "1.3.72"
-    id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
-    id("com.github.ben-manes.versions") version "0.29.0"
+    kotlin("multiplatform") version "1.4.10"
+    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+    id("com.github.ben-manes.versions") version "0.34.0"
     id("jacoco")
     java // jacoco doesn't works on multiplatform without this
 }
@@ -37,6 +37,7 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 ktlint {
+    version.set("0.39.0")
     disabledRules.set(setOf("no-wildcard-imports"))
 }
 
@@ -48,7 +49,10 @@ kotlin {
             }
         }
     }
-    js()
+    js {
+        browser()
+        nodejs()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
