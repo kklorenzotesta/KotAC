@@ -3,9 +3,9 @@ import com.github.benmanes.gradle.versions.reporter.result.Result
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    kotlin("multiplatform") version "1.3.72"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
-    id("com.github.ben-manes.versions") version "0.28.0"
+    kotlin("multiplatform") version "1.4.10"
+    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+    id("com.github.ben-manes.versions") version "0.34.0"
     id("jacoco")
     java // jacoco doesn't works on multiplatform without this
 }
@@ -29,7 +29,7 @@ tasks.withType<DependencyUpdatesTask> {
     }
     outputFormatter = closureOf<Result> {
         PlainTextReporter(project, revision, gradleReleaseChannel)
-                .write(System.out, this)
+            .write(System.out, this)
         if (!this.outdated.dependencies.isEmpty() || this.gradle.current.isUpdateAvailable) {
             throw GradleException("Abort, there are dependencies to update.")
         }
@@ -37,6 +37,7 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 ktlint {
+    version.set("0.39.0")
     disabledRules.set(setOf("no-wildcard-imports"))
 }
 
@@ -48,7 +49,10 @@ kotlin {
             }
         }
     }
-    js()
+    js {
+        browser()
+        nodejs()
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -74,22 +78,22 @@ tasks.withType<JacocoReport> {
     group = "Reporting"
     description = "Generate Jacoco coverage reports."
     val coverageSourceDirs = arrayOf(
-            "commonMain/src",
-            "jvmMain/src"
+        "commonMain/src",
+        "jvmMain/src"
     )
     val classFiles = File("$buildDir/classes/kotlin/jvm/")
-            .walkBottomUp()
-            .toSet()
+        .walkBottomUp()
+        .toSet()
     classDirectories.setFrom(classFiles)
     sourceDirectories.setFrom(files(coverageSourceDirs))
     additionalSourceDirs.setFrom(files(coverageSourceDirs))
     executionData
-            .setFrom(files("$buildDir/jacoco/jvmTest.exec"))
+        .setFrom(files("$buildDir/jacoco/jvmTest.exec"))
     reports {
         xml.isEnabled = true
         csv.isEnabled = false
         html.isEnabled = true
         html.destination =
-                File("$buildDir/jacoco-reports/html")
+            File("$buildDir/jacoco-reports/html")
     }
 }
