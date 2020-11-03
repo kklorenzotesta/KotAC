@@ -10,4 +10,7 @@ class MapBasedValueEnvironment : ValueEnvironment {
     override fun putTree(device: DeviceID, tree: ValueTree) {
         this.map[device] = tree
     }
+
+    override fun readTrees(trace: Trace): Map<DeviceID, Any?> = this.map.mapValues { it.value.get(trace) }
+        .filter { it.value != null }.mapValues { it.value!!.value }
 }

@@ -1,11 +1,11 @@
 package it.unito.kotac.impl
 
 class MapBasedValueTree : ValueTree {
-    private val map: MutableMap<Trace, Any> = HashMap()
+    private val map: MutableMap<Trace, ValueTreeValue> = HashMap()
 
-    override fun get(trace: Trace): Any? = this.map[trace]
+    override fun get(trace: Trace): ValueTreeValue? = this.map[trace]
 
-    override fun put(trace: Trace, value: Any) {
+    override fun put(trace: Trace, value: ValueTreeValue) {
         this.map[trace] = value
     }
 

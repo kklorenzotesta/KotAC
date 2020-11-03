@@ -5,4 +5,5 @@ import it.unito.kotac.DeviceID
 interface ValueEnvironment {
     fun getTree(device: DeviceID): ValueTree?
     fun putTree(device: DeviceID, tree: ValueTree)
+    fun readTrees(trace: Trace): Map<DeviceID, Any?>
 }
