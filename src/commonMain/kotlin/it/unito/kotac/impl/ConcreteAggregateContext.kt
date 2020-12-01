@@ -16,31 +16,31 @@ internal class ConcreteAggregateContext(override val platform: Platform) : Aggre
     private fun <T> extractField(deviceValue: T): Field<T> =
         MapBasedField((neighboringEnvironment.readTrees(stack.trace) + Pair(platform.deviceID, deviceValue)) as Map<DeviceID, T>)
 
-    override fun <T> share(initial: T, f: (Field<T>) -> T): T = align(keyProvider.share()) {
-        val lastValue = localTree.get(stack.trace)
-        @Suppress("UNCHECKED_CAST") val output = f(extractField(if (lastValue != null) lastValue.value as T else initial))
-        localTree.put(stack.trace, ValueTreeValue(output))
-        neighboringTree.put(stack.trace, ValueTreeValue(output))
+    override fun <T> share(initial: T, f: AggregateContext.(Field<T>) -> T): T = align(keyProvider.share()) {
+        @Suppress("UNCHECKED_CAST") val input = if (localTree.containsTrace(stack.trace)) localTree.get(stack.trace) as T else initial
+        val output = f(extractField(input))
+        localTree.put(stack.trace, output)
+        neighboringTree.put(stack.trace, output)
         output
     }
 
-    override fun <K, T> align(key: K, proc: (K) -> T): T {
+    override fun <K, T> align(key: K, proc: AggregateContext.(K) -> T): T {
         this.stack.enter(key)
         val output = proc(key)
         this.stack.exit()
         return output
     }
 
-    override fun <T> nbr(f: () -> T): Field<T> = align(keyProvider.nbr()) {
+    override fun <T> nbr(f: AggregateContext.() -> T): Field<T> = align(keyProvider.nbr()) {
         val localOutput = f()
-        neighboringTree.put(stack.trace, ValueTreeValue(localOutput))
+        neighboringTree.put(stack.trace, localOutput)
         extractField(localOutput)
     }
 
-    override fun <T> rep(initial: T, f: (T) -> T): T = align(keyProvider.rep()) {
-        val lastValue = localTree.get(stack.trace)
-        @Suppress("UNCHECKED_CAST") val output = f(if (lastValue != null) lastValue.value as T else initial)
-        localTree.put(stack.trace, ValueTreeValue(output))
+    override fun <T> rep(initial: T, f: AggregateContext.(T) -> T): T = align(keyProvider.rep()) {
+        @Suppress("UNCHECKED_CAST") val input = if (localTree.containsTrace(stack.trace)) localTree.get(stack.trace) as T else initial
+        val output = f(input)
+        localTree.put(stack.trace, output)
         output
     }
 }
