@@ -27,7 +27,7 @@ env:
     - JDK="adopt@1.11"
     - JDK="adopt-openj9@1.11"
     - JDK="adopt@"
-    - JDK="adopt-openj9@"
+    # - JDK="adopt-openj9@" see https://github.com/eclipse/openj9/issues/11013
 
 stages:
   - lint
