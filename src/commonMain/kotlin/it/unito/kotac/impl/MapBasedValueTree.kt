@@ -1,6 +1,10 @@
 package it.unito.kotac.impl
 
-class MapBasedValueTree : ValueTree {
+/**
+ * Internal implementation of [ValueTree] based on a [MutableMap].
+ */
+internal class MapBasedValueTree : ValueTree {
+    /** backing [MutableMap] */
     private val map: MutableMap<Trace, Any?> = HashMap()
 
     override fun get(trace: Trace): Any? = this.map[trace]

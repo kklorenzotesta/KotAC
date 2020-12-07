@@ -5,13 +5,45 @@ import it.unito.kotac.DeviceID
 import it.unito.kotac.Field
 import it.unito.kotac.Platform
 
+/**
+ * Standard implementation of [AggregateContext]. A new instance must be used on each round of execution.
+ *
+ * @param platform the execution [Platform]
+ */
 internal class ConcreteAggregateContext(override val platform: Platform) : AggregateContext {
+    /**
+     * [ValueTree] with the values for the local interactions. This tree will not be shared with neighbors, minimizing
+     * the network usage.
+     */
     private val localTree: ValueTree = MapBasedValueTree()
+
+    /**
+     * [ValueEnvironment] with all the [ValueTree] received from the neighbors.
+     */
     private val neighboringEnvironment: ValueEnvironment = MapBasedValueEnvironment()
+
+    /**
+     * [ValueTree] with the values that will be shared with neighbors.
+     */
     private val neighboringTree: ValueTree = MapBasedValueTree()
+
+    /**
+     * The [Stack] keeping track of the execution.
+     */
     private val stack: Stack = HashBasedStack()
+
+    /**
+     * Provides alignment keys for the operators.
+     */
     private val keyProvider: AggregateConstructsKeyProvider = AggregateConstructsKeyProvider()
 
+    /**
+     * Returns the [Field] of values from the [neighboringEnvironment] based on the current trace, with [deviceValue]
+     * associated to this device.
+     *
+     * @param T the type of the values in the field
+     * @param deviceValue the value associated to this device in the returned field
+     */
     @Suppress("UNCHECKED_CAST")
     private fun <T> extractField(deviceValue: T): Field<T> =
         MapBasedField((neighboringEnvironment.readTrees(stack.trace) + Pair(platform.deviceID, deviceValue)) as Map<DeviceID, T>)

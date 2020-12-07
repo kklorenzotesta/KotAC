@@ -3,9 +3,10 @@ import com.github.benmanes.gradle.versions.reporter.result.Result
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
-    kotlin("multiplatform") version "1.4.20"
+    kotlin("multiplatform") version "1.4.21"
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
     id("com.github.ben-manes.versions") version "0.36.0"
+    id("org.jetbrains.dokka") version "1.4.20"
     id("jacoco")
     java // jacoco doesn't works on multiplatform without this
 }
@@ -15,6 +16,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 tasks.withType<DependencyUpdatesTask> {
@@ -37,7 +39,7 @@ tasks.withType<DependencyUpdatesTask> {
 }
 
 ktlint {
-    version.set("0.39.0")
+    version.set("0.40.0")
     disabledRules.set(setOf("no-wildcard-imports"))
 }
 
